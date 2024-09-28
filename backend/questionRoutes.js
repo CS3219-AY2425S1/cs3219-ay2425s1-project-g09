@@ -3,18 +3,18 @@ const Question = require('./models/Question');
 const router = new express.Router();
 
 // POST endpoint to create a new question
-app.post('/questions', async (req, res) => {
+router.post('/questions', async (req, res) => {
     try {
         const newQuestion = new Question(req.body);
         await newQuestion.save();
         res.status(201).send(newQuestion);
     } catch (error) {
-          res.status(400).send(error);
+        res.status(400).send(error);
     }
 });
 
 // GET endpoint to retrieve all questions
-app.get('/questions', async (req, res) => {
+router.get('/questions', async (req, res) => {
     try {
         const questions = await Question.find();
         res.send(questions);
@@ -24,7 +24,7 @@ app.get('/questions', async (req, res) => {
 });
 
 // GET endpoint to retrieve a question by ID
-app.get('/questions/:id', async (req, res) => {
+router.get('/questions/:id', async (req, res) => {
     try {
         const question = await Question.findById(req.params.id);
         if (!question) {
@@ -37,7 +37,7 @@ app.get('/questions/:id', async (req, res) => {
 });
 
 // PATCH endpoint to update a question by ID
-app.patch('/questions/:id', async (req, res) => {
+router.patch('/questions/:id', async (req, res) => {
     const updates = Object.keys(req.body);
     const allowedUpdates = ['title', 'description', 'category', 'complexity', 'web_link'];
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update));
@@ -56,7 +56,7 @@ app.patch('/questions/:id', async (req, res) => {
 });
 
 // DELETE endpoint to delete a question by ID
-app.delete('/questions/:id', async (req, res) => {
+router.delete('/questions/:id', async (req, res) => {
     try {
         const question = await Question.findByIdAndDelete(req.params.id);
         if (!question) {

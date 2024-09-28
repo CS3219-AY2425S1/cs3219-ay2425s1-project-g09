@@ -5,64 +5,11 @@ import axios from "axios";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTrash } from "@fortawesome/free-solid-svg-icons";
 
-const QUESTIONS_SERVICE_HOST = "http://localhost:3001/";
+const QUESTIONS_SERVICE_HOST = "http://localhost:3001";
 
 export const HomePage = () => {
   const [questions, setQuestions] = useState([]);
   const navigate = useNavigate();
-
-  const dummyData = [
-    { id: 1, title: "Two Sum", category: "Array", complexity: "Easy" },
-    {
-      id: 2,
-      title: "Add Two Numbers",
-      category: "Linked List",
-      complexity: "Medium",
-    },
-    {
-      id: 3,
-      title: "Longest Substring Without Repeating Characters",
-      category: "String",
-      complexity: "Medium",
-    },
-    {
-      id: 4,
-      title: "Valid Parentheses",
-      category: "Stack",
-      complexity: "Easy",
-    },
-    {
-      id: 5,
-      title: "Merge Two Sorted Lists",
-      category: "Linked List",
-      complexity: "Easy",
-    },
-    {
-      id: 6,
-      title: "Search in Rotated Sorted Array",
-      category: "Binary Search",
-      complexity: "Medium",
-    },
-    {
-      id: 7,
-      title: "Climbing Stairs",
-      category: "Dynamic Programming",
-      complexity: "Easy",
-    },
-    { id: 8, title: "Maximum Subarray", category: "Array", complexity: "Easy" },
-    {
-      id: 9,
-      title: "Product of Array Except Self",
-      category: "Array",
-      complexity: "Medium",
-    },
-    {
-      id: 10,
-      title: "Top K Frequent Elements",
-      category: "Heap",
-      complexity: "Medium",
-    },
-  ];
 
   const getQuestions = async () => {
     try {
@@ -92,7 +39,7 @@ export const HomePage = () => {
 
   useEffect(() => {
     getQuestions();
-  }, []);
+  });
 
   return (
     <div className="App">
@@ -109,11 +56,11 @@ export const HomePage = () => {
             </tr>
           </thead>
           <tbody>
-            {dummyData.map((item) => (
-              <tr key={item.id}>
+            {questions.map((item) => (
+              <tr key={item.question_id}>
                 <td>
                   <span
-                    onClick={() => goToQuestion(item.id)}
+                    onClick={() => goToQuestion(item.question_id)}
                     style={{ color: "black", cursor: "pointer" }}
                     onMouseEnter={(e) => {
                       e.target.style.color = "darkblue";
@@ -127,12 +74,12 @@ export const HomePage = () => {
                     {item.title}
                   </span>
                 </td>
-                <td>{item.category}</td>
+                <td>{item.category.join(', ')}</td>
                 <td>{item.complexity}</td>
                 <td>
                   <button
                     className="delete-btn"
-                    onClick={() => deleteQuestion(item.id)}
+                    onClick={() => deleteQuestion(item._id)}
                   >
                     <FontAwesomeIcon icon={faTrash} />
                   </button>
