@@ -9,3 +9,6 @@ export const NOTIFICATION_SERVICE = process.env.REACT_APP_ENV === "PROD" ?
 
 export const MATCHING_SERVICE = process.env.REACT_APP_ENV === "PROD" ?
 "https://matching-service-313275155433.asia-southeast1.run.app" : "http://localhost:5001";
+
+export const COLLABORATION_SERVICE = process.env.REACT_APP_ENV === "PROD" ?
+"wss://collaboration-service-313275155433.asia-southeast1.run.app" : "ws://localhost:5002";

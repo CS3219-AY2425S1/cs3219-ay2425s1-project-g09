@@ -8,6 +8,7 @@ import { cpp } from '@codemirror/lang-cpp';
 import { java } from '@codemirror/lang-java';
 import { sql } from '@codemirror/lang-sql';
 import '../styles/SharedSpace.css';
+import { COLLABORATION_SERVICE } from '../Services';
 
 const SharedSpace = () => {
   const [text1, setText1] = useState(''); // Local state for text field
@@ -38,7 +39,7 @@ const SharedSpace = () => {
     docRef.current = doc;
 
     const provider = new WebsocketProvider(
-      'ws://localhost:5002', // WebSocket server URL
+      COLLABORATION_SERVICE, // WebSocket server URL
       'shared-text-field',   // Room name for collaboration
       doc                    // Yjs document
     );

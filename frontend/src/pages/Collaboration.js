@@ -3,8 +3,9 @@ import { useNavigate } from 'react-router-dom';
 import { io } from 'socket.io-client';
 import '../styles/Collaboration.css';
 import SharedSpace from '../components/SharedSpace';
+import { USER_SERVICE } from '../Services';
 
-const socket = io('http://localhost:3002'); // replace with your server URL
+const socket = io(USER_SERVICE); // replace with your server URL
 
 export const Collaboration = () => {
     const [chatMessages, setChatMessages] = useState([]);
