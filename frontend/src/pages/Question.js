@@ -159,7 +159,7 @@ export const Question = () => {
   }, [params])
 
   return(
-    <div className="question">
+    <div className="question-page">
       <div className="row1">
         <div>
           <Select className="basic-single" classNamePrefix="complexity" value={complexityValues.find(option => option.value === complexity)}
