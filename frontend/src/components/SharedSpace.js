@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useRef } from 'react';
+import React, { useEffect, useState, useRef, useImperativeHandle, forwardRef } from 'react';
 import * as Y from 'yjs';
 import { WebsocketProvider } from 'y-websocket';
 import CodeMirror from '@uiw/react-codemirror';
@@ -10,7 +10,7 @@ import { sql } from '@codemirror/lang-sql';
 import '../styles/SharedSpace.css';
 import { COLLABORATION_SERVICE } from '../Services';
 
-const SharedSpace = () => {
+const SharedSpace = forwardRef((props, ref) => {
   const [text1, setText1] = useState(''); // Local state for text field
   const [code, setCode] = useState(''); // Local state for code editor
   const docRef = useRef(null); // Use ref to store the Yjs document
@@ -31,7 +31,15 @@ const SharedSpace = () => {
         default:
             return javascript();
     }
-}
+  }
+
+  useImperativeHandle(ref, () => ({
+    getSharedSpaceState: () => ({
+      code,
+      text1,
+      language
+    })
+  }));
 
   useEffect(() => {
 
@@ -116,6 +124,6 @@ const SharedSpace = () => {
       </div>
     </div>
   );
-};
+});
 
 export default SharedSpace;
