@@ -19,6 +19,16 @@ services:
     env_file:
       - ./question-service.env
 
+  conversation-service:
+    build: ./backend/conversation-service
+    image: peerprep-conversation-service
+    ports:
+      - 3003:3003
+    networks:
+      - peerprep-network
+    env_file:
+      - ./conversation-service.env
+
   user-service:
     build: ./backend/user-service
     image: peerprep-user-service

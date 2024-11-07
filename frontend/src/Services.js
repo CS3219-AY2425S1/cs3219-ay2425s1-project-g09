@@ -4,6 +4,10 @@ export const QUESTIONS_SERVICE = process.env.REACT_APP_ENV === "PROD" ?
 export const USER_SERVICE = process.env.REACT_APP_ENV === "PROD" ?
 "https://user-service-313275155433.asia-southeast1.run.app" : "http://localhost:3002";
 
+// Check if this is correctly implemented
+export const CONVERSATION_SERVICE = process.env.REACT_APP_ENV === "PROD" ? 
+"https://conversation-service-313275155433.asia-southeast1.run.app" : "http://localhost:3003";
+
 export const NOTIFICATION_SERVICE = process.env.REACT_APP_ENV === "PROD" ?
 "https://notification-service-313275155433.asia-southeast1.run.app" : "http://localhost:5000";
 

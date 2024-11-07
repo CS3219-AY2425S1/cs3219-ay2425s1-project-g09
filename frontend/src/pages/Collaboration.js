@@ -5,9 +5,11 @@ import { io } from 'socket.io-client';
 import '../styles/Collaboration.css';
 import SharedSpace from '../components/SharedSpace';
 import AIChatbot from '../components/AIChatbot';
-import { QUESTIONS_SERVICE } from "../Services";
+import { CONVERSATION_SERVICE, QUESTIONS_SERVICE } from "../Services";
 
 const socket = io('http://localhost:5002');
+const currentUsername = localStorage.getItem("username");
+const partner = sessionStorage.getItem("partner");
 const roomName = [localStorage.getItem("username"), sessionStorage.getItem("partner")].sort().join('-');
 
 
@@ -26,7 +28,6 @@ export const Collaboration = () => {
         try {
           const response = await axios.get(`${QUESTIONS_SERVICE}/questions/${topic}/${difficulty}`);
           if (response.status === 404 || response.status === 500) {
-            //404 not found
             console.log("Response 404 || 500");
             navigate("/*");
           }
@@ -39,18 +40,10 @@ export const Collaboration = () => {
     }
 
     useEffect(()=> {
-        console.log("useEffect running");
         getQuestionData();
     })
 
-    // Sync chat
-    useEffect(() => {
-        /**
-        socket.on('chatMessage', (message) => {
-            setChatMessages((prevMessages) => [...prevMessages, {text: message, isSent: false}]);
-        });
-        */
-        
+    useEffect(() => {        
         // Join the room with partner
         socket.emit("joinRoom", roomName)
 
@@ -61,43 +54,91 @@ export const Collaboration = () => {
         })
 
         return () => {
-            //socket.off('chatMessage');
             socket.off('leave');
         }
     }, []);
-
-    /**
-    const handleSendMessage = () => {
-        if (currentMessage.trim()) {
-            const newMessage = { text: currentMessage, isSent: true };
-            socket.emit('chatMessage', newMessage);
-            setChatMessages((prevMessages) => [...prevMessages, newMessage]);
-            setCurrentMessage('');
-        }
-    };
-    */
 
 
     const handleLeaveButtonClick = () => {
        setShowModal(true);
     }
 
-    const confirmLeave = () => {
+    const confirmLeave = async () => {
         socket.emit('leave', roomName);
-        navigate('/home');
+        try {
+            const response = await axios.delete(`${CONVERSATION_SERVICE}/conversations/${roomName}`);
+            if (response.status === 404 || response.status === 500) {
+                console.log("Response 404 || 500");
+            }
+            console.log("Conversation deleted");
+            navigate('/home');
+        } catch (error) {
+            console.log(error);
+        }
     }
 
     const cancelLeave = () => {
         setShowModal(false);
     }
-    
-    /**
-    const handleKeyDown = (e) => {
-      if (e.key === 'Enter') {
-        handleSendMessage();
-      }
-    };
-    */
+
+    const setConversation = async () => {
+        try {
+            console.log("Setting new conversation for room: ", roomName);
+            console.log("Current user: ", currentUsername);
+            console.log("Partner: ", partner);
+            const response = await axios.post(`${CONVERSATION_SERVICE}/conversations`, {
+                conversation_id: roomName,
+                user1_name: currentUsername,
+                user2_name: sessionStorage.getItem("partner"),
+                messages: []
+            });
+            if (response.status === 404 || response.status === 500) {
+                console.log("Response 404 || 500");
+            }
+            setChatMessages(response.data.messages);
+            console.log("New conversation set");
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        setConversation();
+    }, []);
+
+    const getConversation = async () => {
+        try {
+            const response = await axios.get(`${CONVERSATION_SERVICE}/conversations/${roomName}`);
+            if (response.status === 404 || response.status === 500) {
+                console.log("Response 404 || 500");
+            }
+            setChatMessages(response.data.messages);
+            console.log("Conversation retrieved");
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    const sendMessage = async () => {
+        const newMessage = currentUsername + ": " + currentMessage;
+        setChatMessages([...chatMessages, newMessage]);
+        try {
+            const response = await axios.patch(`${CONVERSATION_SERVICE}/conversations/${roomName}`, {
+                messages: [...chatMessages, newMessage]
+            });
+            if (response.status === 404 || response.status === 500) {
+                console.log("Response 404 || 500");
+            }
+            setCurrentMessage('');
+            console.log("Message sent");
+        } catch (error) {
+            console.log(error);
+        }
+    }
+
+    useEffect(() => {
+        getConversation();
+    }, [chatMessages]);
 
     return (
         <div className="collaboration-container">
@@ -121,7 +162,7 @@ export const Collaboration = () => {
                 <h3>Chat</h3>
                 <div className="chat-messages">
                     {chatMessages.map((msg, index) => (
-                        <p key={index} className={`message ${msg.isSent ? 'sent' : 'received'}`}>
+                        <p key={index} className="message">
                             {msg.text}
                         </p>
                     ))}
@@ -132,7 +173,7 @@ export const Collaboration = () => {
                     onChange={(e) => setCurrentMessage(e.target.value)}
                     placeholder="Type a message..."
                 />
-                <button className="send-button">Send</button>
+                <button className="send-button" onClick={sendMessage}>Send</button>
             </div>
             
             <div className="leave-container">
