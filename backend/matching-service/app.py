@@ -28,10 +28,9 @@ def produce_message(message):
             credentials = pika.PlainCredentials(os.getenv('RABBITMQ_USER'), 
                                                 os.getenv('RABBITMQ_PASSWORD'))
             parameters = pika.ConnectionParameters(host=RABBITMQ_HOST,
-                                                   port=5671,
+                                                   port=5672,
                                                    virtual_host=os.getenv('RABBITMQ_VHOST'), 
-                                                   credentials=credentials, 
-                                                   ssl_options=pika.SSLOptions(ssl_context))
+                                                   credentials=credentials)
             connection = pika.BlockingConnection(parameters)
         else:
             credentials = pika.PlainCredentials('peerprep', 'peerprep')
@@ -119,9 +118,9 @@ def consume_messages():
             credentials = pika.PlainCredentials(os.getenv('RABBITMQ_USER'), 
                                                 os.getenv('RABBITMQ_PASSWORD'))
             parameters = pika.ConnectionParameters(host=RABBITMQ_HOST, 
+                                                   port=5672,
                                                    virtual_host=os.getenv('RABBITMQ_VHOST'), 
-                                                   credentials=credentials, 
-                                                   ssl_options=pika.SSLOptions(ssl_context))
+                                                   credentials=credentials)
             connection = pika.BlockingConnection(parameters)
         else:
             credentials = pika.PlainCredentials('peerprep', 'peerprep')
