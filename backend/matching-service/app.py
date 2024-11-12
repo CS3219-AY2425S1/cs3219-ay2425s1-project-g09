@@ -48,6 +48,8 @@ def produce_message(message):
         print(f" [x] Sent '{message}'", file=sys.stderr)
     except Exception as e:
         print("Failed: " + str(e), file=sys.stderr)
+    finally:
+        connection.close()
 
 pending_requests = []
 
@@ -143,6 +145,8 @@ def consume_messages():
     except Exception as e:
         print("Failed: " + str(e), file=sys.stderr)
         traceback.print_exc()
+    finally:
+        connection.close()
 
 
 @sio.event
