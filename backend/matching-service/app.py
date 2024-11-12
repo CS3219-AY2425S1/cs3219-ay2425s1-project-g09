@@ -21,6 +21,7 @@ if os.getenv('ENV') == "PROD" else os.getenv('NOTIFICATION_SERVICE', 'http://loc
 PORT = int(os.environ.get('PORT', 5001))
 RABBITMQ_HOST = os.getenv('RABBITMQ_HOST')
 ssl_context = ssl.create_default_context()
+rabbitmq_connection = None
 
 def produce_message(message):
     try:
@@ -61,6 +62,7 @@ def match_user(request):
     print(pending_requests, file=sys.stderr)
     for pending in pending_requests:
         user2 = pending
+        match_found = False
 
         if cancel:
             # Cancel request
@@ -75,16 +77,20 @@ def match_user(request):
             pending_requests.remove(pending)
             print("Sent match found event", file=sys.stderr)
             print("New pending requests list: " + str(pending_requests), file=sys.stderr)
-            return
+            match_found = True
         elif pending['topic'] == topic:
             print(f"MATCHED {user1['username']} with {user2['username']}", file=sys.stderr)
             sio.emit("match_found", get_match_payload(user1, user2, topic, difficulty, f"Matched on topic: {topic}"))
             pending_requests.remove(pending)
-            return
+            match_found = True
         elif pending['difficulty'] == difficulty:
             print(f"MATCHED {user1['username']} with {user2['username']}", file=sys.stderr)
             sio.emit("match_found", get_match_payload(user1, user2, topic, difficulty, f"Matched on difficulty: {difficulty}"))
             pending_requests.remove(pending)
+            match_found = True
+        
+        if match_found:
+            rabbitmq_connection.close()
             return
 
     # No match found; add to pending requests
@@ -113,6 +119,7 @@ def remove_request(request):
 
 
 def consume_messages():
+    global rabbitmq_connection
     print("Trying")
     time.sleep(30)
     print("Attempting connection")
@@ -124,14 +131,14 @@ def consume_messages():
                                                    virtual_host=os.getenv('RABBITMQ_VHOST'), 
                                                    credentials=credentials, 
                                                    ssl_options=pika.SSLOptions(ssl_context))
-            connection = pika.BlockingConnection(parameters)
+            rabbitmq_connection = pika.BlockingConnection(parameters)
         else:
             credentials = pika.PlainCredentials('peerprep', 'peerprep')
-            connection = pika.BlockingConnection(
+            rabbitmq_connection = pika.BlockingConnection(
                 pika.ConnectionParameters(host=RABBITMQ_HOST, credentials=credentials))
         print("connection ready")
 
-        channel = connection.channel()
+        channel = rabbitmq_connection.channel()
         channel.queue_declare(queue='match_queue')
 
         def callback(ch, method, properties, body):
@@ -145,8 +152,6 @@ def consume_messages():
     except Exception as e:
         print("Failed: " + str(e), file=sys.stderr)
         traceback.print_exc()
-    finally:
-        connection.close()
 
 
 @sio.event
