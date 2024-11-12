@@ -10,22 +10,26 @@ import { QUESTIONS_SERVICE, USER_SERVICE } from "../Services";
 const socket = io(USER_SERVICE);
 
 export const Collaboration = () => {
-    const [chatMessages, setChatMessages] = useState([]);
+    const currentUsername = localStorage.getItem("username");
+    const partnerUsername = sessionStorage.getItem("partner");
+    const [chat, setChat] = useState([]);
     const [currentMessage, setCurrentMessage] = useState('');
     const [title, setTitle] = useState('-')
+    const titleRef = useRef(title);
     const [question, setQuestion] = useState('No questions found');
+    const questionRef = useRef(question);
     const [showModal, setShowModal] = useState(false);
     const [roomName, setRoomName] = useState("");
     const navigate = useNavigate();
     const topic = sessionStorage.getItem("match_topic") ?? 'Bit Manipulation';
     const difficulty = sessionStorage.getItem("match_difficulty") ?? 'Medium';
+    const sharedSpaceRef = useRef();
 
 
     const getQuestionData = async () => {
         try {
           const response = await axios.get(`${QUESTIONS_SERVICE}/questions/${topic}/${difficulty}`);
           if (response.status === 404 || response.status === 500) {
-            //404 not found
             console.log("Response 404 || 500");
             navigate("/*");
           }
@@ -42,52 +46,73 @@ export const Collaboration = () => {
         getQuestionData();
     })
 
-    const sharedSpaceRef = useRef();
+    useEffect(() => {
+        titleRef.current = title;
+    }, [title]);
+
+    useEffect(() => {
+        questionRef.current = question;
+    }, [question]);
 
     // Sync chat
     useEffect(() => {
-        /**
-        socket.on('chatMessage', (message) => {
-            setChatMessages((prevMessages) => [...prevMessages, {text: message, isSent: false}]);
-        });
-        */
         
         // Join the room with partner
-        const newRoom = [localStorage.getItem("username"), sessionStorage.getItem("partner")].sort().join('-');
+        const newRoom = [currentUsername, partnerUsername].sort().join('-');
         setRoomName(newRoom);
         socket.emit("joinRoom", newRoom);
         console.log(`Joined room: ${newRoom}`);
 
+        socket.on('receiveMessage', (messageData) => {
+            if (messageData.currentUsername === currentUsername) {
+                console.log("Message sent by current user");
+            } else {
+                setChat((prevChat) => [...prevChat, messageData]);
+                console.log(`User ${currentUsername} received message: ${messageData} from user ${messageData.currentUsername}`);
+            }
+          });
+
         socket.on('leave', (message) => {
-            saveData();
+            saveData().then((result) => {
             navigate('/home');
             alert(message);
+            }).catch(error => {
+                console.log("error occured while saving data");
+            })
         });
 
         return () => {
-            //socket.off('chatMessage');
+            socket.off('receiveMessage');
             socket.off('leave');
         }
     }, []);
 
-    /**
+    useEffect(() => {
+        console.log("Chat updated:", chat);
+    }, [chat]);
+
     const handleSendMessage = () => {
-        if (currentMessage.trim()) {
-            const newMessage = { text: currentMessage, isSent: true };
-            socket.emit('chatMessage', newMessage);
-            setChatMessages((prevMessages) => [...prevMessages, newMessage]);
-            setCurrentMessage('');
-        }
+        const messageData = { roomName, currentUsername, currentMessage };
+        socket.emit('sendMessage', messageData);
+        setChat((prevChat) => [...prevChat, messageData]);
+        setCurrentMessage('');
+
     };
-    */
+
+    const handleKeyDown = (e) => {
+      if (e.key === 'Enter') {
+        handleSendMessage();
+      }
+    };
 
     const saveData = async () => {
         try {
             const sharedSpaceState = sharedSpaceRef.current.getSharedSpaceState();
             const response = await axios.post("http://localhost:5002/saveAttempt", {
                 username: localStorage.getItem("username"),
-                attempts: [{question_id: 1, code: sharedSpaceState.code, text: sharedSpaceState.text1,
-                    language: sharedSpaceState.language, partner_username: sessionStorage.getItem("partner")
+                attempts: [{title: titleRef.current, code: sharedSpaceState.code, text: sharedSpaceState.text1,
+                    language: sharedSpaceState.language, partner_username: sessionStorage.getItem("partner"),
+                    question: questionRef.current
                 }]
             });
             console.log(response);
@@ -102,28 +127,23 @@ export const Collaboration = () => {
 
     const confirmLeave = () => {
         socket.emit('leave', roomName);
-        saveData();
-        navigate('/home');
+        saveData().then((result) => {
+            navigate('/home');
+        }).catch(error => {
+            console.log("Error with saving!");
+        });
     }
 
     const cancelLeave = () => {
         setShowModal(false);
     }
-    
-    /**
-    const handleKeyDown = (e) => {
-      if (e.key === 'Enter') {
-        handleSendMessage();
-      }
-    };
-    */
 
     return (
         <div className="collaboration-container">
           <div className="question-and-whiteboard">
             <h2 className="subheading">Question</h2>
             <div className="question-box">
-                <h3 className='questionTitle'>{title}</h3>
+              <h3 className='questionTitle'>{title}</h3>
               <h3 className='questionText'>{question}</h3>
             </div>
             <div className="whiteboard">
@@ -137,11 +157,11 @@ export const Collaboration = () => {
             <h2>Topic: {topic}</h2>
             <h2>Difficulty: {difficulty}</h2>
             <div className="chat-box">
-                <h3>Chat</h3>
+                <h3>Chat with {partnerUsername}</h3>
                 <div className="chat-messages">
-                    {chatMessages.map((msg, index) => (
-                        <p key={index} className={`message ${msg.isSent ? 'sent' : 'received'}`}>
-                            {msg.text}
+                    {chat.map((msg, index) => (
+                        <p key={index} className={`message ${(msg.currentUsername === currentUsername) ? 'sent' : 'received'}`}>
+                            {msg.currentMessage}
                         </p>
                     ))}
                 </div>
@@ -149,9 +169,10 @@ export const Collaboration = () => {
                     type="text"
                     value={currentMessage}
                     onChange={(e) => setCurrentMessage(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     placeholder="Type a message..."
                 />
-                <button className="send-button">Send</button>
+                <button className="send-button" onClick={handleSendMessage}>Send</button>
             </div>
             
             <div className="leave-container">
