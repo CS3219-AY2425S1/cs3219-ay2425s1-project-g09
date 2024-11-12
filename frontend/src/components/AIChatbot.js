@@ -3,6 +3,7 @@ import '../styles/AIChatbot.css';
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faRobot } from "@fortawesome/free-solid-svg-icons";
 import ReactMarkdown from 'react-markdown';
+import { AICHATBOT_SERVICE } from '../Services';
 
 
 const AIChatbot = () => {
@@ -26,7 +27,7 @@ const AIChatbot = () => {
         // Generate a response
         try {
             console.log("Sending POST request to /chatbot with:", userInput);
-            const response = await fetch("http://localhost:5003/chatbot", {
+            const response = await fetch(`${AICHATBOT_SERVICE}/chatbot`, {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
                 body: JSON.stringify({message: userInput})
