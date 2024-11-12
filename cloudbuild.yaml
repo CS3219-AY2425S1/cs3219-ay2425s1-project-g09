@@ -156,39 +156,6 @@ steps:
       - "--region"
       - "asia-southeast1"
 
-  # RabbitMQ Service
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      - "build"
-      - "-t"
-      - "gcr.io/$PROJECT_ID/rabbitmq"
-      - "--build-arg"
-      - "RABBITMQ_DEFAULT_USER=peerprep"
-      - "--build-arg"
-      - "RABBITMQ_DEFAULT_PASS=peerprep"
-      - "--build-arg"
-      - "RABBITMQ_IMAGE=rabbitmq:3-management"
-      - "."
-  - name: "gcr.io/cloud-builders/docker"
-    args:
-      - "push"
-      - "gcr.io/$PROJECT_ID/rabbitmq"
-  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
-    entrypoint: gcloud
-    args:
-      - "run"
-      - "deploy"
-      - "rabbitmq"
-      - "--image"
-      - "gcr.io/$PROJECT_ID/rabbitmq"
-      - "--region"
-      - "asia-southeast1"
-      - "--platform"
-      - "managed"
-      - "--allow-unauthenticated"
-      - "--set-env-vars"
-      - "RABBITMQ_DEFAULT_USER=peerprep,RABBITMQ_DEFAULT_PASS=peerprep"
-
 images:
   - "gcr.io/$PROJECT_ID/frontend"
   - "gcr.io/$PROJECT_ID/question-service"
@@ -197,7 +164,6 @@ images:
   - "gcr.io/$PROJECT_ID/matching-service"
   - "gcr.io/$PROJECT_ID/collaboration-service"
   - "gcr.io/$PROJECT_ID/aichatbot-service"
-  - "gcr.io/$PROJECT_ID/rabbitmq"
 
 options:
     logging: "CLOUD_LOGGING_ONLY"
