@@ -166,7 +166,9 @@ steps:
       - "RABBITMQ_DEFAULT_USER=peerprep"
       - "--build-arg"
       - "RABBITMQ_DEFAULT_PASS=peerprep"
-      - "./rabbitmq"
+      - "--build-arg"
+      - "RABBITMQ_IMAGE=rabbitmq:3-management"
+      - "."
   - name: "gcr.io/cloud-builders/docker"
     args:
       - "push"
