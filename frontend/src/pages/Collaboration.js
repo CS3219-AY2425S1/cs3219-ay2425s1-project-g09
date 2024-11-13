@@ -5,10 +5,9 @@ import '../styles/Collaboration.css';
 import SharedSpace from '../components/SharedSpace';
 import AIChatbot from '../components/AIChatbot';
 import axios from "axios";
-import { QUESTIONS_SERVICE } from "../Services";
+import { QUESTIONS_SERVICE, COLLABORATION_SERVICE, HTTP_COLLABORATION_SERVICE } from "../Services";
 
-const socket = io('http://localhost:5002');
-
+const socket = io(COLLABORATION_SERVICE);
 
 export const Collaboration = () => {
     const currentUsername = localStorage.getItem("username");
@@ -112,7 +111,7 @@ export const Collaboration = () => {
     const saveData = async () => {
         try {
             const sharedSpaceState = sharedSpaceRef.current.getSharedSpaceState();
-            const response = await axios.post("http://localhost:5002/saveAttempt", {
+            const response = await axios.post(HTTP_COLLABORATION_SERVICE, {
                 username: localStorage.getItem("username"),
                 attempts: [{title: titleRef.current, code: sharedSpaceState.code, text: sharedSpaceState.text1,
                     language: sharedSpaceState.language, partner_username: sessionStorage.getItem("partner"),

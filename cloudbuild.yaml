@@ -112,12 +112,58 @@ steps:
       - "--region"
       - "asia-southeast1"
 
+  # Collaboration Service
+  - name: "gcr.io/cloud-builders/docker" 
+    args:
+      - "build"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/collaboration-service"
+      - "./backend/collaboration-service"
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "gcr.io/$PROJECT_ID/collaboration-service"
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      - "run"
+      - "deploy" 
+      - "collaboration-service"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/collaboration-service"
+      - "--region"
+      - "asia-southeast1"
+
+  # AI Chatbot Service
+  - name: "gcr.io/cloud-builders/docker" 
+    args:
+      - "build"
+      - "-t"
+      - "gcr.io/$PROJECT_ID/aichatbot-service"
+      - "./backend/aichatbot-service"
+  - name: "gcr.io/cloud-builders/docker"
+    args:
+      - "push"
+      - "gcr.io/$PROJECT_ID/aichatbot-service"
+  - name: "gcr.io/google.com/cloudsdktool/cloud-sdk"
+    entrypoint: gcloud
+    args:
+      - "run"
+      - "deploy" 
+      - "aichatbot-service"
+      - "--image"
+      - "gcr.io/$PROJECT_ID/aichatbot-service"
+      - "--region"
+      - "asia-southeast1"
+
 images:
   - "gcr.io/$PROJECT_ID/frontend"
   - "gcr.io/$PROJECT_ID/question-service"
   - "gcr.io/$PROJECT_ID/user-service"
   - "gcr.io/$PROJECT_ID/notification-service"
   - "gcr.io/$PROJECT_ID/matching-service"
+  - "gcr.io/$PROJECT_ID/collaboration-service"
+  - "gcr.io/$PROJECT_ID/aichatbot-service"
 
 options:
     logging: "CLOUD_LOGGING_ONLY"

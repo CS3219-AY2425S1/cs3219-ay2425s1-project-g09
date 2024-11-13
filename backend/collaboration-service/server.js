@@ -13,7 +13,7 @@ const server = http.createServer(app);
 app.use(express.json());
 
 app.use(cors({
-  origin: 'http://localhost:3000', // Allow requests from this origin
+  origin: '*', // Allow requests from this origin
   methods: ['GET', 'POST'],         // Allow specific HTTP methods
   credentials: true                  // Allow credentials (if needed)
 }));
@@ -59,7 +59,7 @@ wss.on('connection', (ws) => {
 // This listens for leave messages
 const io = SocketIO(server, {
   cors: {
-      origin: 'http://localhost:3000', // Allow requests from this origin
+      origin: '*', // Allow requests from this origin
       methods: ['GET', 'POST'],         // Allow specific HTTP methods
       credentials: true                  // Allow credentials (if needed)
   }

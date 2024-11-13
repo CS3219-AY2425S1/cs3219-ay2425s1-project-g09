@@ -4,6 +4,7 @@ import '../styles/Collaboration.css';
 import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
+import { HTTP_COLLABORATION_SERVICE } from '../Services';
 
 export const CollaborationHistory = () => {
 
@@ -30,7 +31,7 @@ export const CollaborationHistory = () => {
 
   const getAttempt = async (username, attemptid) => {
     try {
-      const response = await axios.get(`http://localhost:5002/attempts/${username}/${attemptid}`);
+      const response = await axios.get(`${HTTP_COLLABORATION_SERVICE}/attempts/${username}/${attemptid}`);
       setText1(response.data.attempt.attempts[0].text);
       setCode(response.data.attempt.attempts[0].code);
       setLanguage(response.data.attempt.attempts[0].language);

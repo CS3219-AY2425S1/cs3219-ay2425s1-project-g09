@@ -3,8 +3,8 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
-import { COLLABORATION_SERVICE } from "../Services";
 import { faHome } from '@fortawesome/free-solid-svg-icons';
+import { HTTP_COLLABORATION_SERVICE } from "../Services";
 
 export const History = () => {
   const [history, setHistory] = useState([]);
@@ -13,7 +13,7 @@ export const History = () => {
 
   const getHistory = async (username) => {
     try {
-      const response = await axios.get(`http://localhost:5002/attempts/${username}`);
+      const response = await axios.get(`${HTTP_COLLABORATION_SERVICE}/attempts/${username}`);
       if (response.data.attempts === undefined || response.data.attempts.length === 0) {
         setHeader("Seems like you haven't solved any questions! Solve with a friend today :)");
       }
