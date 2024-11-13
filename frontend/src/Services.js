@@ -13,5 +13,8 @@ export const MATCHING_SERVICE = process.env.REACT_APP_ENV === "PROD" ?
 export const COLLABORATION_SERVICE = process.env.REACT_APP_ENV === "PROD" ?
 "wss://collaboration-service-313275155433.asia-southeast1.run.app" : "ws://localhost:5002";
 
+export const HTTP_COLLABORATION_SERVICE = process.env.REACT_APP_ENV === "PROD" ?
+"https://collaboration-service-313275155433.asia-southeast1.run.app" : "http://localhost:5002";
+
 export const AICHATBOT_SERVICE = process.env.REACT_APP_ENV === "PROD" ?
 "https://aichatbot-service-313275155433.asia-southeast1.run.app" : "http://localhost:5003";
