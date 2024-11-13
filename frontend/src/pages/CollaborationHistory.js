@@ -5,6 +5,10 @@ import axios from "axios";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 
+const COLLABORATION_SERVICE = process.env.REACT_APP === "PROD" ?
+  "https://collaboration-service-313275155433.asia-southeast1.run.app" :
+  "http://localhost:5002/saveAttempt";
+
 export const CollaborationHistory = () => {
 
   const [text1, setText1] = useState('');
@@ -30,7 +34,7 @@ export const CollaborationHistory = () => {
 
   const getAttempt = async (username, attemptid) => {
     try {
-      const response = await axios.get(`http://localhost:5002/attempts/${username}/${attemptid}`);
+      const response = await axios.get(`${COLLABORATION_SERVICE}/attempts/${username}/${attemptid}`);
       setText1(response.data.attempt.attempts[0].text);
       setCode(response.data.attempt.attempts[0].code);
       setLanguage(response.data.attempt.attempts[0].language);

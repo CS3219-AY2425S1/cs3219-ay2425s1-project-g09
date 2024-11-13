@@ -5,7 +5,7 @@ import '../styles/Collaboration.css';
 import SharedSpace from '../components/SharedSpace';
 import AIChatbot from '../components/AIChatbot';
 import axios from "axios";
-import { QUESTIONS_SERVICE, USER_SERVICE, COLLABORATION_SERVICE } from "../Services";
+import { QUESTIONS_SERVICE, COLLABORATION_SERVICE } from "../Services";
 
 const socket = io(COLLABORATION_SERVICE);
 
