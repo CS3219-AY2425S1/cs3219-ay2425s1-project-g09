@@ -18,7 +18,9 @@ export const History = () => {
         setHeader("Seems like you haven't solved any questions! Solve with a friend today :)");
       }
       else {
-        setHistory(response.data.attempts);
+        const output = response.data.attempts;
+        output.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+        setHistory(output);
       }
     } catch (error) {
       alert("An error occured when getting your history!");
