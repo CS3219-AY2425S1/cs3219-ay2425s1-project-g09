@@ -57,11 +57,10 @@ router.get('/attempts/:username', async (req, res) => {
                 for (const item of user.attempts) {
                     output.push({attemptId: item._id, 
                         timestamp: (new Date(item.timestamp)).toLocaleString('en-SG', {
-                        year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false
+                        timeZone: "Asia/Singapore", year: "numeric", month: "numeric", day: "numeric", hour: "2-digit", minute: "2-digit", hour12: false
                     }), title: item.title
                     , partner: item.partner_username})
                 }
-                output.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
                 res.json({ attempts: output} );
             } else {
                 console.log("User not found");
