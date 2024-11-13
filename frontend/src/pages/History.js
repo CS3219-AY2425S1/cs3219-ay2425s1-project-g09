@@ -3,17 +3,19 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { useEffect, useState } from "react";
-import { COLLABORATION_SERVICE } from "../Services";
 import { faHome } from '@fortawesome/free-solid-svg-icons';
 
 export const History = () => {
   const [history, setHistory] = useState([]);
   const [header, setHeader] = useState("View past attempts!");
   const navigate = useNavigate();
+  const COLLOABORATION_SERVICE = process.env.REACT_APP === "PROD" ?
+  "https://collaboration-service-313275155433.asia-southeast1.run.app" :
+  "http://localhost:5002/saveAttempt";
 
   const getHistory = async (username) => {
     try {
-      const response = await axios.get(`http://localhost:5002/attempts/${username}`);
+      const response = await axios.get(`${COLLABORATION_SERVICE}/attempts/${username}`);
       if (response.data.attempts === undefined || response.data.attempts.length === 0) {
         setHeader("Seems like you haven't solved any questions! Solve with a friend today :)");
       }
