@@ -7,7 +7,7 @@ import { faHome } from '@fortawesome/free-solid-svg-icons';
 
 const COLLABORATION_SERVICE = process.env.REACT_APP === "PROD" ?
   "https://collaboration-service-313275155433.asia-southeast1.run.app" :
-  "http://localhost:5002/saveAttempt";
+  "http://localhost:5002";
 
 export const CollaborationHistory = () => {
 
