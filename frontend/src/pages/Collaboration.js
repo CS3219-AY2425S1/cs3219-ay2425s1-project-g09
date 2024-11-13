@@ -111,7 +111,7 @@ export const Collaboration = () => {
     const saveData = async () => {
         try {
             const sharedSpaceState = sharedSpaceRef.current.getSharedSpaceState();
-            const response = await axios.post(HTTP_COLLABORATION_SERVICE, {
+            const response = await axios.post(`${HTTP_COLLABORATION_SERVICE}/saveAttempt`, {
                 username: localStorage.getItem("username"),
                 attempts: [{title: titleRef.current, code: sharedSpaceState.code, text: sharedSpaceState.text1,
                     language: sharedSpaceState.language, partner_username: sessionStorage.getItem("partner"),
