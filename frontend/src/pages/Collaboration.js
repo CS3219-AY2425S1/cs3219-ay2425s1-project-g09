@@ -112,7 +112,7 @@ export const Collaboration = () => {
         try {
             const sharedSpaceState = sharedSpaceRef.current.getSharedSpaceState();
             const response = await axios.post(process.env.REACT_APP === "PROD" ?
-                "https://collaboration-service-313275155433.asia-southeast1.run.app" :
+                "https://collaboration-service-313275155433.asia-southeast1.run.app/saveAttempt" :
                 "http://localhost:5002/saveAttempt", {
                 username: localStorage.getItem("username"),
                 attempts: [{title: titleRef.current, code: sharedSpaceState.code, text: sharedSpaceState.text1,
