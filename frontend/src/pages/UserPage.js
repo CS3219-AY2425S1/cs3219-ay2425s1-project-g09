@@ -17,6 +17,7 @@ export const UserPage = () => {
   const [newEmail, setNewEmail] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const regexPattern = /^(?=.*?[A-Z])(?=.*?[a-z])(?=.*?[0-9]).{8,16}$/;
 
   const options = {
     year: "numeric",
@@ -139,6 +140,12 @@ export const UserPage = () => {
 
      if (newPassword !== confirmPassword) {
          alert("New password and confirm password do not match.")
+         return;
+     }
+
+     if (!regexPattern.test(password)) {
+         console.log(password);
+         alert("Please include 8-16 characters, 1 number, 1 uppercase and 1 lowercase letter in your password");
          return;
      }
 

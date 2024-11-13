@@ -47,7 +47,7 @@ export const Collaboration = () => {
     useEffect(()=> {
         console.log("useEffect running");
         getQuestionData();
-    })
+    }, []);
 
     useEffect(() => {
         titleRef.current = title;
