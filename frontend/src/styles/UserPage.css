@@ -1,0 +1,107 @@
+.user-page {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    background-color: #2F3654;
+    height: 100vh;
+    justify-content: center;
+    align-items: center;
+}
+
+.center-block {
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    width: 50vw;
+    height: 75vh;
+    min-width: 600px;
+    min-height: 600px;
+    border-radius: 20px;
+    padding: 30px;
+    gap: 20px;
+    justify-content: center;
+    align-items: center;
+}
+
+.profile-image {
+    width: 200px;
+    height: 200px;
+    border-radius: 100px;
+}
+
+.profile-table {
+    margin: 10px auto;
+    border-collapse: collapse;
+    width: 80%;
+    border: 5px solid white;
+    color: black;
+    font-size: 16px;
+}
+
+.profile-table tr:nth-child(odd) {
+    background-color: white;
+    height: 40px;
+  }
+  
+.profile-table tr:nth-child(even) {
+    background-color: #ffffcc;
+    height: 40px;
+}
+
+.profile-table td:nth-child(odd) {
+    width: 100px;
+}
+
+.profile-table td:nth-child(even) {
+    width: 400px;
+}
+
+.editable-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.editable-container input {
+  flex-grow: 1;
+  border: 2px solid black;
+  height: 15px;
+}
+
+.editable-container button {
+  font-size: 14px;
+  padding: 3px 3px;
+  height: 25px;
+}
+
+.cancel-button {
+  margin-left: 5px;
+  background-color: red;
+}
+
+.cancel-button:hover {
+  background-color: red;
+}
+
+.edit-icon {
+  cursor: pointer;
+}
+
+.created-at {
+  text-align: left;
+}
+
+.history-btn {
+    background-color: #f7b32b;
+    color: white;
+    font-size: 16px;
+    font-family: cursive;
+    cursor: pointer;
+}
+
+.btn-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+}

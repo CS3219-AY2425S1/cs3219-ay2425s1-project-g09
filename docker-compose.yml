@@ -1,0 +1,85 @@
+version: '3.9'
+
+services:
+  frontend:
+    build: ./frontend
+    image: peerprep-frontend
+    ports:
+      - 3000:3000
+    networks:
+      - peerprep-network
+
+  question-service:
+    build: ./backend/question-service
+    image: peerprep-question-service
+    ports:
+      - 3001:3001
+    networks:
+      - peerprep-network
+    env_file:
+      - ./question-service.env
+
+  user-service:
+    build: ./backend/user-service
+    image: peerprep-user-service
+    ports:
+      - 3002:3002
+    networks:
+      - peerprep-network
+    env_file:
+      - ./user-service.env
+
+  notification-service:
+    build: ./backend/notification-service
+    image: peerprep-notification-service
+    ports:
+      - 5000:5000
+    networks:
+      - peerprep-network
+    env_file:
+      - ./notification-service.env
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - '5672:5672'
+      - '15672:15672'
+    environment:
+      RABBITMQ_DEFAULT_USER: peerprep
+      RABBITMQ_DEFAULT_PASS: peerprep
+    networks:
+      - peerprep-network
+
+  matching-service:
+    build: ./backend/matching-service
+    ports:
+      - '5001:5001'
+    depends_on:
+      - rabbitmq
+      - notification-service
+    env_file:
+      - ./matching-service.env
+    networks:
+      - peerprep-network
+
+  collaboration-service:
+    build: ./backend/collaboration-service
+    ports:
+      - '5002:5002'
+    env_file:
+      - ./collaboration-service.env
+    networks:
+      - peerprep-network
+
+  aichatbot-service:
+    build: ./backend/aichatbot-service
+    ports:
+      - '5003:5003'
+    env_file:
+      - ./aichatbot-service.env
+    networks:
+      - peerprep-network
+networks:
+  peerprep-network:
+    driver: bridge
